@@ -21,16 +21,6 @@ describe("GET /api/categories", () => {
         expect(categories).toHaveLength(4);
         categories.forEach((category) => {
           expect(category).toBeInstanceOf(Object);
-        });
-      });
-  });
-  it("200: response objects should have expected shape", () => {
-    return request(app)
-      .get("/api/categories")
-      .expect(200)
-      .then(({ body }) => {
-        const { categories } = body;
-        categories.forEach((category) => {
           expect(category).toHaveProperty("slug", expect.any(String));
           expect(category).toHaveProperty("description", expect.any(String));
         });
