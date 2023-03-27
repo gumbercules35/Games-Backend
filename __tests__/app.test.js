@@ -102,8 +102,8 @@ describe("GET /api/reviews", () => {
             created_at: expect.any(String),
             votes: expect.any(Number),
             designer: expect.any(String),
+            comment_count: expect.any(String),
           });
-
           expect(["3", "0"]).toContain(review.comment_count);
         });
       });
