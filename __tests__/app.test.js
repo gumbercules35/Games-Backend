@@ -10,6 +10,17 @@ beforeEach(() => {
 
 afterAll(() => db.end());
 
+describe("Typo 404 Error Handling", () => {
+  it("404: reponds page not found when a misspelt path is given", () => {
+    return request(app)
+      .get("/aip/cass")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("404 Path Not Found");
+      });
+  });
+});
+
 describe("GET /api/categories", () => {
   it("200: Should respond with an array of category objects", () => {
     return request(app)
@@ -67,13 +78,34 @@ describe("GET /api/reviews/:review_id", () => {
   });
 });
 
-describe("Typo 404 Error Handling", () => {
-  it("404: reponds page not found when a misspelt path is given", () => {
+describe("GET /api/reviews", () => {
+  it('200: Responds with array of review objects each with a comment_count key/value in DESC date order"', () => {
     return request(app)
-      .get("/aip/cass")
-      .expect(404)
+      .get("/api/reviews")
+      .expect(200)
       .then(({ body }) => {
-        expect(body.msg).toBe("404 Path Not Found");
+        const { reviews } = body;
+
+        expect(reviews).toBeInstanceOf(Array);
+        expect(reviews).toHaveLength(13);
+        expect(reviews).toBeSortedBy("created_at", {
+          descending: true,
+        });
+
+        reviews.forEach((review) => {
+          expect(review).toMatchObject({
+            owner: expect.any(String),
+            title: expect.any(String),
+            review_id: expect.any(Number),
+            category: expect.any(String),
+            review_img_url: expect.any(String),
+            created_at: expect.any(String),
+            votes: expect.any(Number),
+            designer: expect.any(String),
+            comment_count: expect.any(String),
+          });
+        });
+        expect(reviews[4].comment_count).toBe("3");
       });
   });
 });
