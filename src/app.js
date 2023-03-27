@@ -16,9 +16,9 @@ const {
 
 app.use(express.json());
 
-app.route("/api/categories").get(getCategories);
+app.get("/api/categories", getCategories);
 
-app.route("/api/reviews/:review_id").get(getReviewById);
+app.get("/api/reviews/:review_id", getReviewById);
 
 app.use("/*", invalidPathError);
 app.use(psqlErrors);
