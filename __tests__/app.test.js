@@ -28,6 +28,45 @@ describe("GET /api/categories", () => {
   });
 });
 
+describe("GET /api/reviews/:review_id", () => {
+  it("200: Should respond with object matching given review_id", () => {
+    return request(app)
+      .get("/api/reviews/2")
+      .expect(200)
+      .then(({ body }) => {
+        const { review } = body;
+        expect(review).toEqual({
+          category: "dexterity",
+          created_at: "2021-01-18T10:01:41.251Z",
+          designer: "Leslie Scott",
+          owner: "philippaclaire9",
+          review_body: "Fiddly fun for all the family",
+          review_id: 2,
+          review_img_url:
+            "https://images.pexels.com/photos/4473494/pexels-photo-4473494.jpeg?w=700&h=700",
+          title: "Jenga",
+          votes: 5,
+        });
+      });
+  });
+  it("400: Responds with 400 Bad Request when given an invalid review_id (i.e wrong Data type)", () => {
+    return request(app)
+      .get("/api/reviews/stringdatatype")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("400 Bad Request");
+      });
+  });
+  it("404: Responds with 404 Review Not Found when passed a valid review_id that does not exist in the database", () => {
+    return request(app)
+      .get("/api/reviews/0")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe(`404 Review Not Found`);
+      });
+  });
+});
+
 describe("Typo 404 Error Handling", () => {
   it("404: reponds page not found when a misspelt path is given", () => {
     return request(app)
