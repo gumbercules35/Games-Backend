@@ -11,6 +11,6 @@ exports.fetchReviewById = (review_id) => {
     .then(({ rows }) => {
       if (rows.length === 0) {
         return Promise.reject({ status: 404, msg: "404 Review Not Found" });
-      } else return rows;
+      } else return rows[0];
     });
 };

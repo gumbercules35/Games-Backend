@@ -35,27 +35,18 @@ describe("GET /api/reviews/:review_id", () => {
       .expect(200)
       .then(({ body }) => {
         const { review } = body;
-
-        expect(review).toHaveLength(1);
-        expect(review[0]).toBeInstanceOf(Object);
-        expect(review[0]).toHaveProperty("review_id", 2);
-        expect(review[0]).toHaveProperty("title", "Jenga");
-        expect(review[0]).toHaveProperty(
-          "review_body",
-          "Fiddly fun for all the family"
-        );
-        expect(review[0]).toHaveProperty("designer", "Leslie Scott");
-        expect(review[0]).toHaveProperty(
-          "review_img_url",
-          "https://images.pexels.com/photos/4473494/pexels-photo-4473494.jpeg?w=700&h=700"
-        );
-        expect(review[0]).toHaveProperty("votes", 5);
-        expect(review[0]).toHaveProperty("category", "dexterity");
-        expect(review[0]).toHaveProperty("owner", "philippaclaire9");
-        expect(review[0]).toHaveProperty(
-          "created_at",
-          "2021-01-18T10:01:41.251Z"
-        );
+        expect(review).toEqual({
+          category: "dexterity",
+          created_at: "2021-01-18T10:01:41.251Z",
+          designer: "Leslie Scott",
+          owner: "philippaclaire9",
+          review_body: "Fiddly fun for all the family",
+          review_id: 2,
+          review_img_url:
+            "https://images.pexels.com/photos/4473494/pexels-photo-4473494.jpeg?w=700&h=700",
+          title: "Jenga",
+          votes: 5,
+        });
       });
   });
   it("400: Responds with 400 Bad Request when given an invalid review_id (i.e wrong Data type)", () => {
