@@ -6,6 +6,7 @@ const {
 } = require(`${__dirname}/controllers/categories.controller.js`);
 const {
   getReviewById,
+  getReviews,
 } = require(`${__dirname}/controllers/reviews.controller.js`);
 const {
   invalidPathError,
@@ -17,6 +18,8 @@ const {
 app.use(express.json());
 
 app.get("/api/categories", getCategories);
+
+app.get("/api/reviews", getReviews);
 
 app.get("/api/reviews/:review_id", getReviewById);
 
