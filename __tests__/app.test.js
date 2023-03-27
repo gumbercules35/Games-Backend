@@ -109,3 +109,34 @@ describe("GET /api/reviews", () => {
       });
   });
 });
+
+describe("GET /api/reviews/:review_id/comments", () => {
+  it("200: Responds with array of comment objects relating to given review_id in DESC date order", () => {
+    return request(app)
+      .get("/api/reviews/2/comments")
+      .expect(200)
+      .then(({ body }) => {
+        const { comments } = body;
+        expect(comments).toBeArray();
+        expect(comments).toHaveLength(3);
+        comments.forEach((comment) => {
+          expect(comment).toMatchObject({
+            comment_id: expect.any(Number),
+            votes: expect.any(Number),
+            created_at: expect.any(String),
+            author: expect.any(String),
+            body: expect.any(String),
+            review_id: 2,
+          });
+        });
+      });
+  });
+  it("404: Responds 404 No Comments found if a valid review_id is given that has no associate comments in the database ", () => {
+    return request(app)
+      .get("/api/reviews/1/comments")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("404 No Comments Found");
+      });
+  });
+});
