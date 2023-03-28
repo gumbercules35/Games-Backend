@@ -60,6 +60,7 @@ describe("GET /api/reviews/:review_id", () => {
             "https://images.pexels.com/photos/4473494/pexels-photo-4473494.jpeg?w=700&h=700",
           title: "Jenga",
           votes: 5,
+          comment_count: "3",
         });
       });
   });
