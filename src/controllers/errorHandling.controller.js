@@ -9,11 +9,10 @@ exports.psqlErrors = (err, req, res, next) => {
         res.status(400).send({ msg: "400 Bad Request" });
         break;
       case "23502":
-        res
-          .status(400)
-          .send({
-            msg: "400 Bad Request. null value violates not-null constraint",
-          });
+        res.status(400).send({
+          msg: "400 Bad Request. null value violates not-null constraint",
+        });
+        break;
       default:
         next(err);
         break;
