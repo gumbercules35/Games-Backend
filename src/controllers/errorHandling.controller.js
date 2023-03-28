@@ -31,6 +31,7 @@ exports.customErrors = (err, req, res, next) => {
 };
 
 exports.uncaughtErrors = (err, req, res, next) => {
-  console.log(err);
-  res.status(500).send({ msg: "Uncaught error, see console" });
+  if (err) {
+    res.status(500).send({ msg: `${err}` });
+  }
 };
