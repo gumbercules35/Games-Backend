@@ -28,7 +28,15 @@ exports.getCommentsByReview = (req, res, next) => {
 exports.postCommentToReview = (req, res, next) => {
   const { review_id } = req.params;
   const { body } = req;
-  checkRowExists("reviews", "review_id", review_id)
+
+  const checkInputPromises = [
+    checkRowExists("reviews", "review_id", review_id),
+  ];
+  if (body.username) {
+    checkInputPromises.push(checkRowExists("users", "username", body.username));
+  }
+
+  Promise.all(checkInputPromises)
     .then(() => {
       return addCommentOnReview(review_id, body);
     })

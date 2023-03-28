@@ -207,6 +207,19 @@ describe("POST /api/reviews/:review_id/comments", () => {
         expect(body.msg).toBe("400 Bad Request");
       });
   });
+  it("404: responds not found when post object contains an unrecognised username", () => {
+    const commentToPost = {
+      username: "TESTUSER",
+      body: "Test Comment For Testing Purposes",
+    };
+    return request(app)
+      .post("/api/reviews/1/comments")
+      .send(commentToPost)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("404 Not Found");
+      });
+  });
   it("404: Responds not found when trying to post to a valid review_id that doesnt exist yet", () => {
     const commentToPost = {
       username: "mallionaire",
