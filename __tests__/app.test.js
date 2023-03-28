@@ -234,3 +234,72 @@ describe("POST /api/reviews/:review_id/comments", () => {
       });
   });
 });
+
+describe("PATCH /api/reviews/:review_id", () => {
+  it("200: Responds with updated review object, with votes correctly incremented", () => {
+    const patchObj = { inc_votes: 10 };
+    return request(app)
+      .patch("/api/reviews/1")
+      .send(patchObj)
+      .expect(200)
+      .then(({ body }) => {
+        const { review } = body;
+        expect(review).toMatchObject({
+          review_id: 1,
+          title: "Agricola",
+          designer: "Uwe Rosenberg",
+          owner: "mallionaire",
+          review_img_url:
+            "https://images.pexels.com/photos/974314/pexels-photo-974314.jpeg?w=700&h=700",
+          review_body: "Farmyard fun!",
+          category: "euro game",
+          created_at: "2021-01-18T10:00:20.514Z",
+          votes: 11,
+        });
+      });
+  });
+  it("400: Responds bad request when given a malformed object (missing values)", () => {
+    const patchObj = {};
+    return request(app)
+      .patch("/api/reviews/1")
+      .send(patchObj)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe(
+          "400 Bad Request. null value violates not-null constraint"
+        );
+      });
+  });
+  it("400: responds bad request when given malformed object (wrong data type for values)", () => {
+    const patchObj = { inc_vote: "Im a string" };
+    return request(app)
+      .patch("/api/reviews/1")
+      .send(patchObj)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe(
+          "400 Bad Request. null value violates not-null constraint"
+        );
+      });
+  });
+  it("400: responds bad request when given an invalid review_id (wrong data type)", () => {
+    const patchObj = { inc_votes: 10 };
+    return request(app)
+      .patch("/api/reviews/stringtype")
+      .send(patchObj)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("400 Bad Request");
+      });
+  });
+  it("404: responds not found when given a valid review_id that doesnt exist yet", () => {
+    const patchObj = { inc_votes: 10 };
+    return request(app)
+      .patch("/api/reviews/0")
+      .send(patchObj)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("404 Not Found");
+      });
+  });
+});
