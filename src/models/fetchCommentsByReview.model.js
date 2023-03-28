@@ -10,10 +10,6 @@ exports.fetchCommentsByReview = (review_id) => {
       [review_id]
     )
     .then(({ rows }) => {
-      if (rows.length === 0) {
-        return Promise.reject({ status: 404, msg: "404 No Comments Found" });
-      } else {
-        return rows;
-      }
+      return rows;
     });
 };
