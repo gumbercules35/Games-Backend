@@ -344,3 +344,94 @@ describe("GET /api/users", () => {
       });
   });
 });
+
+describe("GET /api/reviews?", () => {
+  describe("Query category=", () => {
+    it("200: Should respond with array of reviews with matching category only", () => {
+      return request(app)
+        .get("/api/reviews?category=dexterity")
+        .expect(200)
+        .then(({ body }) => {
+          const { reviews } = body;
+          expect(reviews).toBeArray();
+          expect(reviews).toHaveLength(1);
+          reviews.forEach((review) => {
+            expect(review.category).toBe("dexterity");
+          });
+        });
+    });
+    it("200: Should respond with an empty array when passed a valid existing category and no reviews reference that category ", () => {
+      return request(app)
+        .get("/api/reviews?category=children's games")
+        .expect(200)
+        .then(({ body }) => {
+          const { reviews } = body;
+          expect(reviews).toEqual([]);
+        });
+    });
+    it("404: should respond 404 Not Found when given a category that doesnt exist", () => {
+      return request(app)
+        .get("/api/reviews?category=TEST")
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe("404 Not Found");
+        });
+    });
+  });
+  describe("Query sort_by=", () => {
+    it("200: Should respond with array of all reviews sorted by and valid column passed as query", () => {
+      return request(app)
+        .get("/api/reviews?sort_by=votes")
+        .expect(200)
+        .then(({ body }) => {
+          const { reviews } = body;
+          expect(reviews).toBeArray();
+          expect(reviews).toHaveLength(13);
+          expect(reviews).toBeSortedBy("votes", { descending: true });
+        });
+    });
+    it("400: Responds invalid Query when any none white-listed values are used to sort by", () => {
+      return request(app)
+        .get("/api/reviews?sort_by=SQLINJECTION")
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("400 Invalid Query");
+        });
+    });
+  });
+  describe("Query order=", () => {
+    it("200: Responds with array of all objects in ascending or descending created_at depending on passed query", () => {
+      return request(app)
+        .get("/api/reviews?order=ASC")
+        .expect(200)
+        .then(({ body }) => {
+          const { reviews } = body;
+          expect(reviews).toBeArray();
+          expect(reviews).toHaveLength(13);
+          expect(reviews).toBeSortedBy("created_at");
+        });
+    });
+    it("400: Responds Invalid Query when queried with non-whitelisted value for order", () => {
+      return request(app)
+        .get("/api/reviews?order=SQLINJECTION")
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("400 Invalid Query");
+        });
+    });
+  });
+  it("200: Should respond with expected array when given multiple valid queries", () => {
+    return request(app)
+      .get("/api/reviews?order=ASC&sort_by=review_id&category=social deduction")
+      .expect(200)
+      .then(({ body }) => {
+        const { reviews } = body;
+        expect(reviews).toBeArray();
+        expect(reviews).toHaveLength(11);
+        expect(reviews).toBeSortedBy("review_id");
+        reviews.forEach((review) => {
+          expect(review.category).toBe("social deduction");
+        });
+      });
+  });
+});

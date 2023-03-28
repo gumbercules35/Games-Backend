@@ -7,9 +7,13 @@ const {
 const {
   updateReviewVotes,
 } = require(`${__dirname}/../models/updateReviewVotes.model.js`);
+const {
+  checkRowExists,
+} = require(`${__dirname}/../models/checkRowExists.model.js`);
 
 exports.getReviewById = (req, res, next) => {
   const { review_id } = req.params;
+
   fetchReviewById(review_id)
     .then((review) => {
       res.status(200).send({ review });
@@ -19,10 +23,19 @@ exports.getReviewById = (req, res, next) => {
     });
 };
 
-exports.getReviews = (req, res) => {
-  fetchReviews().then((reviews) => {
-    res.status(200).send({ reviews });
-  });
+exports.getReviews = (req, res, next) => {
+  const { category, sort_by, order } = req.query;
+
+  fetchReviews(category, sort_by, order)
+    .then((reviews) => {
+      if (reviews.length === 0 && category) {
+        return checkRowExists("categories", "slug", category);
+      } else res.status(200).send({ reviews });
+    })
+    .then(() => {
+      res.status(200).send({ reviews: [] });
+    })
+    .catch((err) => next(err));
 };
 
 exports.patchReviewVotes = (req, res, next) => {
