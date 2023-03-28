@@ -10,6 +10,7 @@ const {
 } = require(`${__dirname}/controllers/reviews.controller.js`);
 const {
   getCommentsByReview,
+  postCommentToReview,
 } = require(`${__dirname}/controllers/comments.controller.js`);
 const {
   invalidPathError,
@@ -27,6 +28,7 @@ app.get("/api/reviews", getReviews);
 app.get("/api/reviews/:review_id", getReviewById);
 
 app.get("/api/reviews/:review_id/comments", getCommentsByReview);
+app.post("/api/reviews/:review_id/comments", postCommentToReview);
 
 app.use("/*", invalidPathError);
 app.use(psqlErrors);
