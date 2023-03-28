@@ -160,7 +160,7 @@ describe("GET /api/reviews/:review_id/comments", () => {
   });
 });
 
-describe.only("POST /api/reviews/:review_id/comments", () => {
+describe("POST /api/reviews/:review_id/comments", () => {
   it("201: responds with posted comment object", () => {
     const commentToPost = {
       username: "mallionaire",
@@ -195,7 +195,10 @@ describe.only("POST /api/reviews/:review_id/comments", () => {
       });
   });
   it("400: Responds bad request when trying to post to an invalid review_id (wrong data type) ", () => {
-    const commentToPost = {};
+    const commentToPost = {
+      username: "mallionaire",
+      body: "Test Comment For Testing Purposes",
+    };
     return request(app)
       .post("/api/reviews/stringtype/comments")
       .send(commentToPost)
@@ -205,7 +208,10 @@ describe.only("POST /api/reviews/:review_id/comments", () => {
       });
   });
   it("404: Responds not found when trying to post to a valid review_id that doesnt exist yet", () => {
-    const commentToPost = {};
+    const commentToPost = {
+      username: "mallionaire",
+      body: "Test Comment For Testing Purposes",
+    };
     return request(app)
       .post("/api/reviews/99/comments")
       .send(commentToPost)
