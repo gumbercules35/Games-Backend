@@ -333,7 +333,7 @@ describe("GET /api/users", () => {
       .expect(200)
       .then(({ body }) => {
         const { users } = body;
-        console.table(users);
+
         expect(users).toBeArray();
         expect(users).toHaveLength(4);
         users.forEach((user) => {
