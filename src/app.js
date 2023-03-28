@@ -12,6 +12,7 @@ const {
 const {
   getCommentsByReview,
   postCommentToReview,
+  deleteCommentById,
 } = require(`${__dirname}/controllers/comments.controller.js`);
 const {
   invalidPathError,
@@ -28,6 +29,8 @@ app.get("/api/reviews", getReviews);
 
 app.get("/api/reviews/:review_id", getReviewById);
 app.patch("/api/reviews/:review_id", patchReviewVotes);
+
+app.delete("/api/comments/:comment_id", deleteCommentById);
 
 app.get("/api/reviews/:review_id/comments", getCommentsByReview);
 app.post("/api/reviews/:review_id/comments", postCommentToReview);
