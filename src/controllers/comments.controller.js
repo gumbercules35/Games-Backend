@@ -7,6 +7,9 @@ const {
 const {
   addCommentOnReview,
 } = require(`${__dirname}/../models/addCommentOnReview.model.js`);
+const {
+  removeCommentById,
+} = require(`${__dirname}/../models/removeCommentById.model.js`);
 
 exports.getCommentsByReview = (req, res, next) => {
   const { review_id } = req.params;
@@ -44,4 +47,16 @@ exports.postCommentToReview = (req, res, next) => {
       res.status(201).send({ comment });
     })
     .catch((err) => next(err));
+};
+
+exports.deleteCommentById = (req, res, next) => {
+  const { comment_id } = req.params;
+  removeCommentById(comment_id)
+    .then(() => {
+      res.status(204).send();
+    })
+    .catch((err) => {
+      console.log(err);
+      next(err);
+    });
 };

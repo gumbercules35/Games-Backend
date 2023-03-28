@@ -303,3 +303,25 @@ describe("PATCH /api/reviews/:review_id", () => {
       });
   });
 });
+
+describe("DELETE /api/comments/:comment_id", () => {
+  it("204: Should respond with no content and delete comment with given comment_id from db", () => {
+    return request(app).delete("/api/comments/6").expect(204);
+  });
+  it("400: should respond 400 bad request when given an invalid comment_id (wrong datatype)", () => {
+    return request(app)
+      .delete("/api/comments/stringtype")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("400 Bad Request");
+      });
+  });
+  it("404: Should respond 404 Not Found when given a valid comment_id that doesnt exist yet", () => {
+    return request(app)
+      .delete("/api/comments/100")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("404 Not Found");
+      });
+  });
+});
