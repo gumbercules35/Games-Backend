@@ -159,3 +159,59 @@ describe("GET /api/reviews/:review_id/comments", () => {
       });
   });
 });
+
+describe.only("POST /api/reviews/:review_id/comments", () => {
+  it("201: responds with posted comment object", () => {
+    const commentToPost = {
+      username: "mallionaire",
+      body: "Test Comment For Testing Purposes",
+    };
+    return request(app)
+      .post("/api/reviews/1/comments")
+      .send(commentToPost)
+      .expect(201)
+      .then(({ body }) => {
+        const { comment } = body;
+        expect(comment).toEqual({
+          comment_id: 7,
+          body: "Test Comment For Testing Purposes",
+          review_id: 1,
+          author: "mallionaire",
+          votes: 0,
+          created_at: expect.any(String),
+        });
+      });
+  });
+  it("400: Responds bad request when given a malformed post object (missing necessary values)", () => {
+    const commentToPost = {};
+    return request(app)
+      .post("/api/reviews/1/comments")
+      .send(commentToPost)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe(
+          "400 Bad Request. null value violates not-null constraint"
+        );
+      });
+  });
+  it("400: Responds bad request when trying to post to an invalid review_id (wrong data type) ", () => {
+    const commentToPost = {};
+    return request(app)
+      .post("/api/reviews/stringtype/comments")
+      .send(commentToPost)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("400 Bad Request");
+      });
+  });
+  it("404: Responds not found when trying to post to a valid review_id that doesnt exist yet", () => {
+    const commentToPost = {};
+    return request(app)
+      .post("/api/reviews/99/comments")
+      .send(commentToPost)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("404 Not Found");
+      });
+  });
+});

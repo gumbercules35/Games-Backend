@@ -4,6 +4,9 @@ const {
 const {
   checkRowExists,
 } = require(`${__dirname}/../models/checkRowExists.model.js`);
+const {
+  addCommentOnReview,
+} = require(`${__dirname}/../models/addCommentOnReview.model.js`);
 
 exports.getCommentsByReview = (req, res, next) => {
   const { review_id } = req.params;
@@ -20,4 +23,17 @@ exports.getCommentsByReview = (req, res, next) => {
     .catch((err) => {
       next(err);
     });
+};
+
+exports.postCommentToReview = (req, res, next) => {
+  const { review_id } = req.params;
+  const { body } = req;
+  checkRowExists("reviews", "review_id", review_id)
+    .then(() => {
+      return addCommentOnReview(review_id, body);
+    })
+    .then((comment) => {
+      res.status(201).send({ comment });
+    })
+    .catch((err) => next(err));
 };
