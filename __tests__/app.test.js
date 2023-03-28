@@ -3,6 +3,9 @@ const { app } = require(`${__dirname}/../src/app.js`);
 const data = require(`${__dirname}/../db/data/test-data/index.js`);
 const seed = require(`${__dirname}/../db/seeds/seed.js`);
 const request = require("supertest");
+const {
+  checkRowExists,
+} = require(`${__dirname}/../src/models/checkRowExists.model.js`);
 
 beforeEach(() => {
   return seed(data);
@@ -106,6 +109,53 @@ describe("GET /api/reviews", () => {
           });
         });
         expect(reviews[4].comment_count).toBe("3");
+      });
+  });
+});
+
+describe("GET /api/reviews/:review_id/comments", () => {
+  it("200: Responds with array of comment objects relating to given review_id in DESC date order", () => {
+    return request(app)
+      .get("/api/reviews/2/comments")
+      .expect(200)
+      .then(({ body }) => {
+        const { comments } = body;
+        expect(comments).toBeArray();
+        expect(comments).toHaveLength(3);
+        comments.forEach((comment) => {
+          expect(comment).toMatchObject({
+            comment_id: expect.any(Number),
+            votes: expect.any(Number),
+            created_at: expect.any(String),
+            author: expect.any(String),
+            body: expect.any(String),
+            review_id: 2,
+          });
+        });
+      });
+  });
+  it("200: Responds with an empty array if a valid review_id is given that has no associated comments in the database ", () => {
+    return request(app)
+      .get("/api/reviews/1/comments")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comments).toEqual([]);
+      });
+  });
+  it("400: Responds with Bad Request when given an invalid review_id (wrong data type)", () => {
+    return request(app)
+      .get("/api/reviews/stringtype/comments")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("400 Bad Request");
+      });
+  });
+  it("404: Responds with review not found when given a valid review_id that doesnt exist", () => {
+    return request(app)
+      .get("/api/reviews/0/comments")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("404 Not Found");
       });
   });
 });
