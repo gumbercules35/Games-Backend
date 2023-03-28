@@ -12,7 +12,7 @@ exports.fetchReviews = (category, sort_by = "created_at", order = "DESC") => {
     "created_at",
     "votes",
   ];
-  const allowedOrder = ["ASC", "DESC"];
+  const allowedOrder = ["asc", "desc", "ASC", "DESC"];
 
   if (!allowedSorts.includes(sort_by) || !allowedOrder.includes(order)) {
     return Promise.reject({ status: 400, msg: "400 Invalid Query" });

@@ -390,7 +390,7 @@ describe("GET /api/reviews?", () => {
           expect(reviews).toBeSortedBy("votes", { descending: true });
         });
     });
-    it("400: Responds invalid Query when any none white-listed values are used to sort by", () => {
+    it("400: Responds invalid Query when any non-greenlisted values are used to sort by", () => {
       return request(app)
         .get("/api/reviews?sort_by=SQLINJECTION")
         .expect(400)
@@ -402,7 +402,7 @@ describe("GET /api/reviews?", () => {
   describe("Query order=", () => {
     it("200: Responds with array of all objects in ascending or descending created_at depending on passed query", () => {
       return request(app)
-        .get("/api/reviews?order=ASC")
+        .get("/api/reviews?order=asc")
         .expect(200)
         .then(({ body }) => {
           const { reviews } = body;
@@ -411,7 +411,7 @@ describe("GET /api/reviews?", () => {
           expect(reviews).toBeSortedBy("created_at");
         });
     });
-    it("400: Responds Invalid Query when queried with non-whitelisted value for order", () => {
+    it("400: Responds Invalid Query when queried with non-greenlisted value for order", () => {
       return request(app)
         .get("/api/reviews?order=SQLINJECTION")
         .expect(400)
@@ -422,7 +422,7 @@ describe("GET /api/reviews?", () => {
   });
   it("200: Should respond with expected array when given multiple valid queries", () => {
     return request(app)
-      .get("/api/reviews?order=ASC&sort_by=review_id&category=social deduction")
+      .get("/api/reviews?order=asc&sort_by=review_id&category=social deduction")
       .expect(200)
       .then(({ body }) => {
         const { reviews } = body;
