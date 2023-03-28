@@ -20,12 +20,15 @@ const {
   uncaughtErrors,
   customErrors,
 } = require(`${__dirname}/controllers/errorHandling.controller.js`);
+const { getUsers } = require(`${__dirname}/controllers/users.controller.js`);
 
 app.use(express.json());
 
 app.get("/api/categories", getCategories);
 
 app.get("/api/reviews", getReviews);
+
+app.get("/api/users", getUsers);
 
 app.get("/api/reviews/:review_id", getReviewById);
 app.patch("/api/reviews/:review_id", patchReviewVotes);
