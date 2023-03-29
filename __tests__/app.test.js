@@ -6,7 +6,7 @@ const request = require("supertest");
 const {
   checkRowExists,
 } = require(`${__dirname}/../src/models/checkRowExists.model.js`);
-
+const apiJson = require(`${__dirname}/../endpoints.json`);
 beforeEach(() => {
   return seed(data);
 });
@@ -433,6 +433,19 @@ describe("GET /api/reviews?", () => {
         reviews.forEach((review) => {
           expect(review.category).toBe("social deduction");
         });
+      });
+  });
+});
+
+describe("GET /api", () => {
+  it("200; Responds with JSON object containing endpoints as keys and their functionality described within an object on that key", () => {
+    return request(app)
+      .get("/api")
+      .expect(200)
+      .then(({ body }) => {
+        const { paths } = body;
+        expect(paths).toBeObject();
+        expect(paths).toEqual(apiJson);
       });
   });
 });

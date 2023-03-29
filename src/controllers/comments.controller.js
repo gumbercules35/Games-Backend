@@ -20,7 +20,7 @@ exports.getCommentsByReview = (req, res, next) => {
         return checkRowExists("reviews", "review_id", review_id);
       } else res.status(200).send({ comments });
     })
-    .then((comments) => {
+    .then(() => {
       res.status(200).send({ comments: [] });
     })
     .catch((err) => {

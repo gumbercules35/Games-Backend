@@ -22,7 +22,11 @@ const {
 } = require(`${__dirname}/controllers/errorHandling.controller.js`);
 const { getUsers } = require(`${__dirname}/controllers/users.controller.js`);
 
+const { getPaths } = require(`${__dirname}/controllers/paths.controller.js`);
+
 app.use(express.json());
+
+app.get("/api", getPaths);
 
 app.get("/api/categories", getCategories);
 

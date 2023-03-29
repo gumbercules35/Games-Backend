@@ -13,6 +13,8 @@ exports.psqlErrors = (err, req, res, next) => {
           msg: "400 Bad Request. null value violates not-null constraint",
         });
         break;
+      case "ERR_HTTP_HEADERS_SENT":
+        break;
       default:
         next(err);
         break;
