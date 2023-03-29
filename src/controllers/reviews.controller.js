@@ -1,15 +1,9 @@
 const {
   fetchReviewById,
-} = require(`${__dirname}/../models/fetchReviewById.model.js`);
-const {
   fetchReviews,
-} = require(`${__dirname}/../models/fetchReviews.model.js`);
-const {
   updateReviewVotes,
-} = require(`${__dirname}/../models/updateReviewVotes.model.js`);
-const {
   checkRowExists,
-} = require(`${__dirname}/../models/checkRowExists.model.js`);
+} = require(`${__dirname}/../models/index.model.js`);
 
 exports.getReviewById = (req, res, next) => {
   const { review_id } = req.params;

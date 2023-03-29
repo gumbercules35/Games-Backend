@@ -1,4 +1,4 @@
-const { fetchPaths } = require(`${__dirname}/../models/fetchPaths.model.js`);
+const { fetchPaths } = require(`${__dirname}/../models/index.model.js`);
 
 exports.getPaths = (req, res) => {
   const paths = fetchPaths();
