@@ -16,9 +16,10 @@ const {
   getReviews,
   patchReviewVotes,
 } = require("./reviews.controller");
-const { getUsers } = require("./users.controller");
+const { getUsers, getUserByUsername } = require("./users.controller");
 
 module.exports = {
+  getUserByUsername,
   getCategories,
   getCommentsByReview,
   postCommentToReview,
