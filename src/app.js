@@ -3,26 +3,19 @@ const app = express();
 
 const {
   getCategories,
-} = require(`${__dirname}/controllers/categories.controller.js`);
-const {
-  getReviewById,
-  getReviews,
-  patchReviewVotes,
-} = require(`${__dirname}/controllers/reviews.controller.js`);
-const {
   getCommentsByReview,
   postCommentToReview,
   deleteCommentById,
-} = require(`${__dirname}/controllers/comments.controller.js`);
-const {
   invalidPathError,
   psqlErrors,
-  uncaughtErrors,
   customErrors,
-} = require(`${__dirname}/controllers/errorHandling.controller.js`);
-const { getUsers } = require(`${__dirname}/controllers/users.controller.js`);
-
-const { getPaths } = require(`${__dirname}/controllers/paths.controller.js`);
+  uncaughtErrors,
+  getPaths,
+  getReviewById,
+  getReviews,
+  patchReviewVotes,
+  getUsers,
+} = require(`${__dirname}/controllers/index.controller.js`);
 
 app.use(express.json());
 
