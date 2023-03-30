@@ -741,4 +741,33 @@ describe("DELETE Paths", () => {
         });
     });
   });
+  describe("DELETE /api/reviews/:review_id", () => {
+    it("204: Responds with 204 code and no content", () => {
+      return request(app)
+        .delete("/api/reviews/1")
+        .expect(204)
+        .then(() => {
+          return request(app).get("/api/reviews/1").expect(404);
+        })
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("404 Review Not Found");
+        });
+    });
+    it("404: Responds not found if review_id is valid but doesnt exist in db", () => {
+      return request(app)
+        .delete("/api/reviews/0")
+        .expect(404)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("404 Not Found");
+        });
+    });
+    it("400: Responds bad request if review_id is invalid (wrong data type)", () => {
+      return request(app)
+        .delete("/api/reviews/stringdatatype")
+        .expect(400)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("400 Bad Request");
+        });
+    });
+  });
 });

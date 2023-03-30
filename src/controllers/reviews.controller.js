@@ -4,6 +4,7 @@ const {
   updateReviewVotes,
   checkRowExists,
   addReview,
+  removeReviewById,
 } = require(`${__dirname}/../models/index.model.js`);
 
 exports.getReviewById = (req, res, next) => {
@@ -70,4 +71,13 @@ exports.postReview = (req, res, next) => {
     .catch((err) => {
       next(err);
     });
+};
+
+exports.deleteReviewById = (req, res, next) => {
+  const { review_id } = req.params;
+  removeReviewById(review_id)
+    .then(() => {
+      res.status(204).send();
+    })
+    .catch((err) => next(err));
 };

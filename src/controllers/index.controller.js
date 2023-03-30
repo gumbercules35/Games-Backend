@@ -17,6 +17,7 @@ const {
   getReviews,
   patchReviewVotes,
   postReview,
+  deleteReviewById,
 } = require("./reviews.controller");
 const { getUsers, getUserByUsername } = require("./users.controller");
 
@@ -38,4 +39,5 @@ module.exports = {
   patchCommentById,
   postReview,
   postCategory,
+  deleteReviewById,
 };
