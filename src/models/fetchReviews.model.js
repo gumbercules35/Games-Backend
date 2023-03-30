@@ -51,5 +51,18 @@ exports.fetchReviews = (
     queryStr += `;`;
   }
 
-  return db.query(queryStr, queryParams).then(({ rows }) => rows);
+  const dataPromise = db.query(queryStr, queryParams);
+  const totalCountPromise = db.query(
+    `SELECT COUNT(review_id) AS total_count
+  FROM reviews;`
+  );
+
+  return Promise.all([dataPromise, totalCountPromise]).then(
+    ([dataPromise, totalCountPromise]) => {
+      const { rows } = dataPromise;
+      const total_count = totalCountPromise.rows[0].total_count;
+
+      return { rows, total_count };
+    }
+  );
 };

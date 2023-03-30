@@ -89,6 +89,7 @@ describe("GET /api/reviews", () => {
       .expect(200)
       .then(({ body }) => {
         const { reviews } = body;
+        // console.log(body);
 
         expect(reviews).toBeInstanceOf(Array);
         expect(reviews).toHaveLength(10);
@@ -110,6 +111,7 @@ describe("GET /api/reviews", () => {
           });
         });
         expect(reviews[4].comment_count).toBe("3");
+        expect(body.total_count).toBe("13");
       });
   });
 });
@@ -368,6 +370,7 @@ describe("GET /api/reviews?", () => {
         .then(({ body }) => {
           const { reviews } = body;
           expect(reviews).toEqual([]);
+          expect(body.total_count).toBe("13");
         });
     });
     it("404: should respond 404 Not Found when given a category that doesnt exist", () => {
@@ -476,6 +479,7 @@ describe("GET /api/reviews?", () => {
         reviews.forEach((review) => {
           expect(review.category).toBe("social deduction");
         });
+        expect(body.total_count).toBe("13");
       });
   });
 });
