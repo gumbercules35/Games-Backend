@@ -50,6 +50,6 @@ exports.fetchReviews = (
   } else {
     queryStr += `;`;
   }
-  console.log(queryStr);
+
   return db.query(queryStr, queryParams).then(({ rows }) => rows);
 };
