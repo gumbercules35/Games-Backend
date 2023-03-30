@@ -3,6 +3,7 @@ const {
   checkRowExists,
   addCommentOnReview,
   removeCommentById,
+  updateCommentById,
 } = require(`${__dirname}/../models/index.model.js`);
 
 exports.getCommentsByReview = (req, res, next) => {
@@ -52,4 +53,15 @@ exports.deleteCommentById = (req, res, next) => {
     .catch((err) => {
       next(err);
     });
+};
+
+exports.patchCommentById = (req, res, next) => {
+  const { comment_id } = req.params;
+  const { body } = req;
+
+  updateCommentById(comment_id, body)
+    .then((comment) => {
+      res.status(200).send({ comment });
+    })
+    .catch((err) => next(err));
 };

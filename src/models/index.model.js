@@ -9,6 +9,7 @@ const { fetchUserByUsername } = require("./fetchUserByUsername.model");
 const { fetchUsers } = require("./fetchUsers.model");
 const { removeCommentById } = require("./removeCommentById.model");
 const { updateReviewVotes } = require("./updateReviewVotes.model");
+const { updateCommentById } = require("./updateCommentById.model");
 
 module.exports = {
   addCommentOnReview,
@@ -22,4 +23,5 @@ module.exports = {
   removeCommentById,
   updateReviewVotes,
   fetchUserByUsername,
+  updateCommentById,
 };
