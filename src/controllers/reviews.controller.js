@@ -19,16 +19,19 @@ exports.getReviewById = (req, res, next) => {
 };
 
 exports.getReviews = (req, res, next) => {
-  const { category, sort_by, order } = req.query;
+  const { category, sort_by, order, limit, p } = req.query;
 
-  fetchReviews(category, sort_by, order)
-    .then((reviews) => {
-      if (reviews.length === 0 && category) {
-        return checkRowExists("categories", "slug", category);
-      } else res.status(200).send({ reviews });
+  fetchReviews(category, sort_by, order, limit, p)
+    .then(({ rows, total_count }) => {
+      if (rows.length === 0 && category) {
+        return Promise.all([
+          checkRowExists("categories", "slug", category),
+          total_count,
+        ]);
+      } else return res.status(200).send({ reviews: rows, total_count });
     })
-    .then(() => {
-      res.status(200).send({ reviews: [] });
+    .then((passedPromiseArray) => {
+      res.status(200).send({ reviews: [], total_count: passedPromiseArray[1] });
     })
     .catch((err) => next(err));
 };

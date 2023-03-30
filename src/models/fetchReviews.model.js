@@ -1,6 +1,12 @@
 const db = require(`${__dirname}/../../db/connection.js`);
 
-exports.fetchReviews = (category, sort_by = "created_at", order = "DESC") => {
+exports.fetchReviews = (
+  category,
+  sort_by = "created_at",
+  order = "DESC",
+  limit = 10,
+  p = 0
+) => {
   const allowedSorts = [
     "review_id",
     "title",
@@ -14,10 +20,18 @@ exports.fetchReviews = (category, sort_by = "created_at", order = "DESC") => {
   ];
   const allowedOrder = ["asc", "desc", "ASC", "DESC"];
 
-  if (!allowedSorts.includes(sort_by) || !allowedOrder.includes(order)) {
+  const parsedLimit = parseInt(limit);
+  const parsedPage = parseInt(p);
+
+  if (
+    !allowedSorts.includes(sort_by) ||
+    !allowedOrder.includes(order) ||
+    isNaN(parsedLimit) ||
+    isNaN(parsedPage)
+  ) {
     return Promise.reject({ status: 400, msg: "400 Invalid Query" });
   }
-
+  const offset = parsedPage - 1;
   const queryParams = [];
   let queryStr = `SELECT reviews.owner, reviews.title, reviews.review_id, reviews.category, reviews.review_img_url, reviews.created_at, reviews.votes, reviews.designer, COUNT(comments.review_id) AS comment_count
       FROM reviews
@@ -29,6 +43,26 @@ exports.fetchReviews = (category, sort_by = "created_at", order = "DESC") => {
   }
 
   queryStr += ` GROUP BY reviews.review_id
-      ORDER BY reviews.${sort_by} ${order}; `;
-  return db.query(queryStr, queryParams).then(({ rows }) => rows);
+      ORDER BY reviews.${sort_by} ${order}
+      LIMIT ${parsedLimit}`;
+  if (offset > 0) {
+    queryStr += ` OFFSET ${offset * parsedLimit};`;
+  } else {
+    queryStr += `;`;
+  }
+
+  const dataPromise = db.query(queryStr, queryParams);
+  const totalCountPromise = db.query(
+    `SELECT COUNT(review_id) AS total_count
+  FROM reviews;`
+  );
+
+  return Promise.all([dataPromise, totalCountPromise]).then(
+    ([dataPromise, totalCountPromise]) => {
+      const { rows } = dataPromise;
+      const total_count = totalCountPromise.rows[0].total_count;
+
+      return { rows, total_count };
+    }
+  );
 };

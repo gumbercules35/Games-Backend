@@ -11,6 +11,7 @@ const { removeCommentById } = require("./removeCommentById.model");
 const { updateReviewVotes } = require("./updateReviewVotes.model");
 const { updateCommentById } = require("./updateCommentById.model");
 const { addReview } = require("./addReview.model");
+
 module.exports = {
   addCommentOnReview,
   checkRowExists,

@@ -89,9 +89,10 @@ describe("GET /api/reviews", () => {
       .expect(200)
       .then(({ body }) => {
         const { reviews } = body;
+        // console.log(body);
 
         expect(reviews).toBeInstanceOf(Array);
-        expect(reviews).toHaveLength(13);
+        expect(reviews).toHaveLength(10);
         expect(reviews).toBeSortedBy("created_at", {
           descending: true,
         });
@@ -110,6 +111,7 @@ describe("GET /api/reviews", () => {
           });
         });
         expect(reviews[4].comment_count).toBe("3");
+        expect(body.total_count).toBe("13");
       });
   });
 });
@@ -368,6 +370,7 @@ describe("GET /api/reviews?", () => {
         .then(({ body }) => {
           const { reviews } = body;
           expect(reviews).toEqual([]);
+          expect(body.total_count).toBe("13");
         });
     });
     it("404: should respond 404 Not Found when given a category that doesnt exist", () => {
@@ -387,7 +390,7 @@ describe("GET /api/reviews?", () => {
         .then(({ body }) => {
           const { reviews } = body;
           expect(reviews).toBeArray();
-          expect(reviews).toHaveLength(13);
+          expect(reviews).toHaveLength(10);
           expect(reviews).toBeSortedBy("votes", { descending: true });
         });
     });
@@ -408,7 +411,7 @@ describe("GET /api/reviews?", () => {
         .then(({ body }) => {
           const { reviews } = body;
           expect(reviews).toBeArray();
-          expect(reviews).toHaveLength(13);
+          expect(reviews).toHaveLength(10);
           expect(reviews).toBeSortedBy("created_at");
         });
     });
@@ -421,18 +424,62 @@ describe("GET /api/reviews?", () => {
         });
     });
   });
+  describe("Query limit=", () => {
+    it("200: Should respond with array of reviews of length === limit, with a default of 10", () => {
+      return request(app)
+        .get("/api/reviews?limit=5")
+        .expect(200)
+        .then(({ body: { reviews } }) => {
+          expect(reviews).toBeArray();
+          expect(reviews).toHaveLength(5);
+        });
+    });
+    it("400: Responds bad request when passed invalid data type for limit", () => {
+      return request(app)
+        .get("/api/reviews?limit=stringtype")
+        .expect(400)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("400 Invalid Query");
+        });
+    });
+  });
+  describe("Query p=", () => {
+    it('200: Responds with correct "page" of review objects ', () => {
+      return request(app)
+        .get("/api/reviews?sort_by=review_id&order=ASC&p=2")
+        .expect(200)
+        .then(({ body: { reviews } }) => {
+          expect(reviews).toBeArray();
+          expect(reviews).toHaveLength(3);
+          reviews.forEach((review) => {
+            expect(review.review_id).toBeGreaterThanOrEqual(11);
+          });
+        });
+    });
+    it("400: Responds bad request if value of p is not a valid datatype", () => {
+      return request(app)
+        .get("/api/reviews?sort_by=review_id&order=ASC&p=stringdatatype")
+        .expect(400)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("400 Invalid Query");
+        });
+    });
+  });
   it("200: Should respond with expected array when given multiple valid queries", () => {
     return request(app)
-      .get("/api/reviews?order=asc&sort_by=review_id&category=social deduction")
+      .get(
+        "/api/reviews?order=asc&sort_by=review_id&category=social deduction&limit=3"
+      )
       .expect(200)
       .then(({ body }) => {
         const { reviews } = body;
         expect(reviews).toBeArray();
-        expect(reviews).toHaveLength(11);
+        expect(reviews).toHaveLength(3);
         expect(reviews).toBeSortedBy("review_id");
         reviews.forEach((review) => {
           expect(review.category).toBe("social deduction");
         });
+        expect(body.total_count).toBe("13");
       });
   });
 });
