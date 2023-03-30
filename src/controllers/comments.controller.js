@@ -8,8 +8,9 @@ const {
 
 exports.getCommentsByReview = (req, res, next) => {
   const { review_id } = req.params;
+  const { limit, p } = req.query;
   // checkRowExists("reviews", "review_id", review_id);
-  fetchCommentsByReview(review_id)
+  fetchCommentsByReview(review_id, limit, p)
     .then((comments) => {
       if (comments.length === 0) {
         return checkRowExists("reviews", "review_id", review_id);

@@ -23,6 +23,7 @@ describe("Typo 404 Error Handling", () => {
       });
   });
 });
+
 describe("GET Paths", () => {
   describe("GET /api", () => {
     it("200; Responds with JSON object containing endpoints as keys and their functionality described within an object on that key", () => {
@@ -85,140 +86,140 @@ describe("GET Paths", () => {
           expect(body.total_count).toBe("13");
         });
     });
-  });
-  describe("GET /api/reviews?", () => {
-    describe("Query category=", () => {
-      it("200: Should respond with array of reviews with matching category only", () => {
+    describe("GET /api/reviews?", () => {
+      describe("Query category=", () => {
+        it("200: Should respond with array of reviews with matching category only", () => {
+          return request(app)
+            .get("/api/reviews?category=dexterity")
+            .expect(200)
+            .then(({ body }) => {
+              const { reviews } = body;
+              expect(reviews).toBeArray();
+              expect(reviews).toHaveLength(1);
+              reviews.forEach((review) => {
+                expect(review.category).toBe("dexterity");
+              });
+            });
+        });
+        it("200: Should respond with an empty array when passed a valid existing category and no reviews reference that category ", () => {
+          return request(app)
+            .get("/api/reviews?category=children's games")
+            .expect(200)
+            .then(({ body }) => {
+              const { reviews } = body;
+              expect(reviews).toEqual([]);
+              expect(body.total_count).toBe("13");
+            });
+        });
+        it("404: should respond 404 Not Found when given a category that doesnt exist", () => {
+          return request(app)
+            .get("/api/reviews?category=TEST")
+            .expect(404)
+            .then(({ body }) => {
+              expect(body.msg).toBe("404 Not Found");
+            });
+        });
+      });
+      describe("Query sort_by=", () => {
+        it("200: Should respond with array of all reviews sorted by and valid column passed as query", () => {
+          return request(app)
+            .get("/api/reviews?sort_by=votes")
+            .expect(200)
+            .then(({ body }) => {
+              const { reviews } = body;
+              expect(reviews).toBeArray();
+              expect(reviews).toHaveLength(10);
+              expect(reviews).toBeSortedBy("votes", { descending: true });
+            });
+        });
+        it("400: Responds invalid Query when any non-greenlisted values are used to sort by", () => {
+          return request(app)
+            .get("/api/reviews?sort_by=SQLINJECTION")
+            .expect(400)
+            .then(({ body }) => {
+              expect(body.msg).toBe("400 Invalid Query");
+            });
+        });
+      });
+      describe("Query order=", () => {
+        it("200: Responds with array of all objects in ascending or descending created_at depending on passed query", () => {
+          return request(app)
+            .get("/api/reviews?order=asc")
+            .expect(200)
+            .then(({ body }) => {
+              const { reviews } = body;
+              expect(reviews).toBeArray();
+              expect(reviews).toHaveLength(10);
+              expect(reviews).toBeSortedBy("created_at");
+            });
+        });
+        it("400: Responds Invalid Query when queried with non-greenlisted value for order", () => {
+          return request(app)
+            .get("/api/reviews?order=SQLINJECTION")
+            .expect(400)
+            .then(({ body }) => {
+              expect(body.msg).toBe("400 Invalid Query");
+            });
+        });
+      });
+      describe("Query limit=", () => {
+        it("200: Should respond with array of reviews of length === limit, with a default of 10", () => {
+          return request(app)
+            .get("/api/reviews?limit=5")
+            .expect(200)
+            .then(({ body: { reviews } }) => {
+              expect(reviews).toBeArray();
+              expect(reviews).toHaveLength(5);
+            });
+        });
+        it("400: Responds bad request when passed invalid data type for limit", () => {
+          return request(app)
+            .get("/api/reviews?limit=stringtype")
+            .expect(400)
+            .then(({ body: { msg } }) => {
+              expect(msg).toBe("400 Invalid Query");
+            });
+        });
+      });
+      describe("Query p=", () => {
+        it('200: Responds with correct "page" of review objects ', () => {
+          return request(app)
+            .get("/api/reviews?sort_by=review_id&order=ASC&p=2")
+            .expect(200)
+            .then(({ body: { reviews } }) => {
+              expect(reviews).toBeArray();
+              expect(reviews).toHaveLength(3);
+              reviews.forEach((review) => {
+                expect(review.review_id).toBeGreaterThanOrEqual(11);
+              });
+            });
+        });
+        it("400: Responds bad request if value of p is not a valid datatype", () => {
+          return request(app)
+            .get("/api/reviews?sort_by=review_id&order=ASC&p=stringdatatype")
+            .expect(400)
+            .then(({ body: { msg } }) => {
+              expect(msg).toBe("400 Invalid Query");
+            });
+        });
+      });
+      it("200: Should respond with expected array when given multiple valid queries", () => {
         return request(app)
-          .get("/api/reviews?category=dexterity")
+          .get(
+            "/api/reviews?order=asc&sort_by=review_id&category=social deduction&limit=3"
+          )
           .expect(200)
           .then(({ body }) => {
             const { reviews } = body;
             expect(reviews).toBeArray();
-            expect(reviews).toHaveLength(1);
+            expect(reviews).toHaveLength(3);
+            expect(reviews).toBeSortedBy("review_id");
             reviews.forEach((review) => {
-              expect(review.category).toBe("dexterity");
+              expect(review.category).toBe("social deduction");
             });
-          });
-      });
-      it("200: Should respond with an empty array when passed a valid existing category and no reviews reference that category ", () => {
-        return request(app)
-          .get("/api/reviews?category=children's games")
-          .expect(200)
-          .then(({ body }) => {
-            const { reviews } = body;
-            expect(reviews).toEqual([]);
             expect(body.total_count).toBe("13");
           });
       });
-      it("404: should respond 404 Not Found when given a category that doesnt exist", () => {
-        return request(app)
-          .get("/api/reviews?category=TEST")
-          .expect(404)
-          .then(({ body }) => {
-            expect(body.msg).toBe("404 Not Found");
-          });
-      });
-    });
-    describe("Query sort_by=", () => {
-      it("200: Should respond with array of all reviews sorted by and valid column passed as query", () => {
-        return request(app)
-          .get("/api/reviews?sort_by=votes")
-          .expect(200)
-          .then(({ body }) => {
-            const { reviews } = body;
-            expect(reviews).toBeArray();
-            expect(reviews).toHaveLength(10);
-            expect(reviews).toBeSortedBy("votes", { descending: true });
-          });
-      });
-      it("400: Responds invalid Query when any non-greenlisted values are used to sort by", () => {
-        return request(app)
-          .get("/api/reviews?sort_by=SQLINJECTION")
-          .expect(400)
-          .then(({ body }) => {
-            expect(body.msg).toBe("400 Invalid Query");
-          });
-      });
-    });
-    describe("Query order=", () => {
-      it("200: Responds with array of all objects in ascending or descending created_at depending on passed query", () => {
-        return request(app)
-          .get("/api/reviews?order=asc")
-          .expect(200)
-          .then(({ body }) => {
-            const { reviews } = body;
-            expect(reviews).toBeArray();
-            expect(reviews).toHaveLength(10);
-            expect(reviews).toBeSortedBy("created_at");
-          });
-      });
-      it("400: Responds Invalid Query when queried with non-greenlisted value for order", () => {
-        return request(app)
-          .get("/api/reviews?order=SQLINJECTION")
-          .expect(400)
-          .then(({ body }) => {
-            expect(body.msg).toBe("400 Invalid Query");
-          });
-      });
-    });
-    describe("Query limit=", () => {
-      it("200: Should respond with array of reviews of length === limit, with a default of 10", () => {
-        return request(app)
-          .get("/api/reviews?limit=5")
-          .expect(200)
-          .then(({ body: { reviews } }) => {
-            expect(reviews).toBeArray();
-            expect(reviews).toHaveLength(5);
-          });
-      });
-      it("400: Responds bad request when passed invalid data type for limit", () => {
-        return request(app)
-          .get("/api/reviews?limit=stringtype")
-          .expect(400)
-          .then(({ body: { msg } }) => {
-            expect(msg).toBe("400 Invalid Query");
-          });
-      });
-    });
-    describe("Query p=", () => {
-      it('200: Responds with correct "page" of review objects ', () => {
-        return request(app)
-          .get("/api/reviews?sort_by=review_id&order=ASC&p=2")
-          .expect(200)
-          .then(({ body: { reviews } }) => {
-            expect(reviews).toBeArray();
-            expect(reviews).toHaveLength(3);
-            reviews.forEach((review) => {
-              expect(review.review_id).toBeGreaterThanOrEqual(11);
-            });
-          });
-      });
-      it("400: Responds bad request if value of p is not a valid datatype", () => {
-        return request(app)
-          .get("/api/reviews?sort_by=review_id&order=ASC&p=stringdatatype")
-          .expect(400)
-          .then(({ body: { msg } }) => {
-            expect(msg).toBe("400 Invalid Query");
-          });
-      });
-    });
-    it("200: Should respond with expected array when given multiple valid queries", () => {
-      return request(app)
-        .get(
-          "/api/reviews?order=asc&sort_by=review_id&category=social deduction&limit=3"
-        )
-        .expect(200)
-        .then(({ body }) => {
-          const { reviews } = body;
-          expect(reviews).toBeArray();
-          expect(reviews).toHaveLength(3);
-          expect(reviews).toBeSortedBy("review_id");
-          reviews.forEach((review) => {
-            expect(review.category).toBe("social deduction");
-          });
-          expect(body.total_count).toBe("13");
-        });
     });
   });
 
@@ -306,6 +307,47 @@ describe("GET Paths", () => {
           expect(body.msg).toBe("404 Not Found");
         });
     });
+    describe("GET /api/reviews/:review_id/comments?", () => {
+      describe("Query limit=", () => {
+        it("200: Responds with array of comments of length === limit, with a default of 10", () => {
+          return request(app)
+            .get("/api/reviews/2/comments?limit=2")
+            .expect(200)
+            .then(({ body: { comments } }) => {
+              expect(comments).toBeArray();
+              expect(comments).toHaveLength(2);
+            });
+        });
+        it("400: Responds Invalid Query if limit is not accepted data type", () => {
+          return request(app)
+            .get("/api/reviews/2/comments?limit=stringdatatype")
+            .expect(400)
+            .then(({ body: { msg } }) => {
+              expect(msg).toBe("400 Invalid Query");
+            });
+        });
+      });
+      describe("Query p=", () => {
+        it('200: Responds with correct "page" of comment objects ', () => {
+          return request(app)
+            .get("/api/reviews/2/comments?p=2&limit=1")
+            .expect(200)
+            .then(({ body: { comments } }) => {
+              expect(comments).toBeArray();
+              expect(comments).toHaveLength(1);
+              expect(comments[0].comment_id).toBe(1);
+            });
+        });
+        it("400: Responds Invalid Query if p is not accepted data type", () => {
+          return request(app)
+            .get("/api/reviews/2/comments?p=stringdatatype")
+            .expect(400)
+            .then(({ body: { msg } }) => {
+              expect(msg).toBe("400 Invalid Query");
+            });
+        });
+      });
+    });
   });
   describe("GET /api/users", () => {
     it("200: Should respond with an array of all user objects", () => {
@@ -349,6 +391,7 @@ describe("GET Paths", () => {
     });
   });
 });
+
 describe("POST Paths", () => {
   describe("POST /api/reviews/:review_id/comments", () => {
     it("201: responds with posted comment object", () => {
@@ -501,6 +544,7 @@ describe("POST Paths", () => {
     });
   });
 });
+
 describe("PATCH Paths", () => {
   describe("PATCH /api/reviews/:review_id", () => {
     it("200: Responds with updated review object, with votes correctly incremented", () => {
@@ -632,6 +676,7 @@ describe("PATCH Paths", () => {
     });
   });
 });
+
 describe("DELETE Paths", () => {
   describe("DELETE /api/comments/:comment_id", () => {
     it("204: Should respond with no content and delete comment with given comment_id from db", () => {
