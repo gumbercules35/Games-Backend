@@ -464,4 +464,12 @@ describe("GET /api/users/:username", () => {
         });
       });
   });
+  it("404: responds not found when given an invalid username", () => {
+    return request(app)
+      .get("/api/users/MrNobody")
+      .expect(404)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("404 Not Found");
+      });
+  });
 });

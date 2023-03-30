@@ -8,5 +8,11 @@ exports.fetchUserByUsername = (username) => {
     WHERE username = $1`,
       [username]
     )
-    .then(({ rows }) => rows[0]);
+    .then(({ rows }) => {
+      if (rows.length === 0) {
+        return Promise.reject({ status: 404, msg: "404 Not Found" });
+      } else {
+        return rows[0];
+      }
+    });
 };
