@@ -131,6 +131,11 @@
     "queries": [],
     "exampleResponse": {}
   },
+  "DELETE /api/reviews/:review_id": {
+    "description": "Deletes the review with assigned review_id, will also subsequently remove all comments assigned to the review from the database",
+    "queries": [],
+    "exampleResponse": {}
+  },
   "POST /api/reviews/:review_id/comments": {
     "description": "Posts a comment, associating it with the review_id, and serves that posted comment back ",
     "queries": [],
