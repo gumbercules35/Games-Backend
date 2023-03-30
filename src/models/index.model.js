@@ -11,7 +11,7 @@ const { removeCommentById } = require("./removeCommentById.model");
 const { updateReviewVotes } = require("./updateReviewVotes.model");
 const { updateCommentById } = require("./updateCommentById.model");
 const { addReview } = require("./addReview.model");
-
+const { addCategory } = require("./addCategory.model.js");
 module.exports = {
   addCommentOnReview,
   checkRowExists,
@@ -26,4 +26,5 @@ module.exports = {
   fetchUserByUsername,
   updateCommentById,
   addReview,
+  addCategory,
 };

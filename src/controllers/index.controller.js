@@ -1,4 +1,4 @@
-const { getCategories } = require("./categories.controller");
+const { getCategories, postCategory } = require("./categories.controller");
 const {
   getCommentsByReview,
   postCommentToReview,
@@ -37,4 +37,5 @@ module.exports = {
   getUsers,
   patchCommentById,
   postReview,
+  postCategory,
 };
