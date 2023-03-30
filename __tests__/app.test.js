@@ -543,6 +543,48 @@ describe("POST Paths", () => {
         });
     });
   });
+  describe("POST /api/categories", () => {
+    it("201: Responds with newly created category object", () => {
+      const postObj = {
+        slug: "Test Category",
+        description: "Test Description",
+      };
+      return request(app)
+        .post("/api/categories")
+        .send(postObj)
+        .expect(201)
+        .then(({ body: { category } }) => {
+          expect(category).toBeObject();
+          expect(category).toEqual(postObj);
+        });
+    });
+    it("400: Responds bad request when post is missing required fields", () => {
+      return request(app)
+        .post("/api/categories")
+        .send({})
+        .expect(400)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe(
+            "400 Bad Request. null value violates not-null constraint"
+          );
+        });
+    });
+    it("400: Responds bad request if supplied with slug that already exists in the database", () => {
+      const postObj = {
+        slug: "dexterity",
+        description: "Test Description",
+      };
+      return request(app)
+        .post("/api/categories")
+        .send(postObj)
+        .expect(400)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe(
+            "400 Bad Request. duplicate key value violates unique constraint"
+          );
+        });
+    });
+  });
 });
 
 describe("PATCH Paths", () => {

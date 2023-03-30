@@ -174,5 +174,19 @@
         "comment_count": "0"
       }
     }
+  },
+  "POST /api/categories": {
+    "description": "Posts a new category to the database, and serves back that posted category object",
+    "queries": [],
+    "exampleRequest": {
+      "slug": "Category Name Goes Here",
+      "description": "Category Description Text Here"
+    },
+    "exampleResponse": {
+      "category": {
+        "slug": "Category Name Goes Here",
+        "description": "Category Description Text Here"
+      }
+    }
   }
 }

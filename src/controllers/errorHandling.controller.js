@@ -17,6 +17,10 @@ exports.psqlErrors = (err, req, res, next) => {
         res.status(400).send({
           msg: "400 Bad Request. insert or update on table violates foreign key constraint",
         });
+      case "23505":
+        res.status(400).send({
+          msg: "400 Bad Request. duplicate key value violates unique constraint",
+        });
       case "ERR_HTTP_HEADERS_SENT":
         break;
       default:
