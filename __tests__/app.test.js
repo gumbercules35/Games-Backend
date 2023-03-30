@@ -449,3 +449,27 @@ describe("GET /api", () => {
       });
   });
 });
+
+describe("GET /api/users/:username", () => {
+  it("200: Should respond with a user object of matching username", () => {
+    return request(app)
+      .get("/api/users/mallionaire")
+      .expect(200)
+      .then(({ body: { user } }) => {
+        expect(user).toMatchObject({
+          username: "mallionaire",
+          name: "haz",
+          avatar_url:
+            "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg",
+        });
+      });
+  });
+  it("404: responds not found when given an invalid username", () => {
+    return request(app)
+      .get("/api/users/MrNobody")
+      .expect(404)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("404 Not Found");
+      });
+  });
+});
