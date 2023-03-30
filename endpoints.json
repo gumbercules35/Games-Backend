@@ -2,6 +2,31 @@
   "GET /api": {
     "description": "serves up a json representation of all the available endpoints of the api"
   },
+  "GET /api/users": {
+    "description": "serves an array of all users",
+    "queries": [],
+    "exampleResponse": {
+      "users": [
+        {
+          "username": "tickle122",
+          "name": "Tom Tickle",
+          "avatar_url": "https://vignette.wikia.nocookie.net/mrmen/images/d/d6/Mr-Tickle-9a.png/revision/latest?cb=20180127221953"
+        }
+      ]
+    }
+  },
+  "GET /api/users/:username": {
+    "description": "Serves a user object with matching username value",
+    "queries": [],
+    "exampleRequest": {},
+    "exampleResponse": {
+      "user": {
+        "username": "grumpy19",
+        "name": "Paul Grump",
+        "avatar_url": "https://vignette.wikia.nocookie.net/mrmen/images/7/78/Mr-Grumpy-3A.PNG/revision/latest?cb=20170707233013"
+      }
+    }
+  },
   "GET /api/categories": {
     "description": "serves an array of all categories",
     "queries": [],
@@ -15,8 +40,8 @@
     }
   },
   "GET /api/reviews": {
-    "description": "serves an array of all reviews",
-    "queries": ["category", "sort_by", "order"],
+    "description": "serves an array of all reviews and a total count of all reviews in the database, defaults to first page, 10 objects per page, DESC date order",
+    "queries": ["category", "sort_by", "order", "limit", "p"],
     "exampleResponse": {
       "reviews": [
         {
@@ -28,20 +53,8 @@
           "created_at": 1610964101251,
           "votes": 5
         }
-      ]
-    }
-  },
-  "GET /api/users": {
-    "description": "serves an array of all users",
-    "queries": [],
-    "exampleResponse": {
-      "users": [
-        {
-          "username": "tickle122",
-          "name": "Tom Tickle",
-          "avatar_url": "https://vignette.wikia.nocookie.net/mrmen/images/d/d6/Mr-Tickle-9a.png/revision/latest?cb=20180127221953"
-        }
-      ]
+      ],
+      "total_count": 13
     }
   },
   "GET /api/reviews/:review_id": {
@@ -62,6 +75,22 @@
       }
     }
   },
+  "GET /api/reviews/:review_id/comments": {
+    "description": "Serves an array of all comments associated with a given review, defaults to first page, 10 objects per page",
+    "queries": ["limit", "p"],
+    "exampleResponse": {
+      "comments": [
+        {
+          "comment_id": 59,
+          "body": "Quis duis mollit ad enim deserunt.",
+          "review_id": 1,
+          "author": "jessjelly",
+          "votes": 3,
+          "created_at": "2021-03-27T19:48:58.110Z"
+        }
+      ]
+    }
+  },
   "PATCH /api/reviews/:review_id": {
     "description": "Updates a specific review, currently only supports vote incrementation",
     "queries": [],
@@ -80,26 +109,27 @@
       }
     }
   },
+  "PATCH /api/comments/:comment_id": {
+    "description": "Updates a given comments votes key by the value requested",
+    "queries": [],
+    "exampleRequest": {
+      "inc_votes": 10
+    },
+    "exampleResponse": {
+      "comments": {
+        "comment_id": 24,
+        "body": "Ex id ipsum dolore non cillum anim sint duis nisi anim deserunt nisi minim.",
+        "review_id": 10,
+        "author": "jessjelly",
+        "votes": 19,
+        "created_at": "2021-03-27T14:15:31.110Z"
+      }
+    }
+  },
   "DELETE /api/comments/:comment_id": {
     "description": "Deletes the comment with assigned comment_id",
     "queries": [],
     "exampleResponse": {}
-  },
-  "GET /api/reviews/:review_id/comments": {
-    "description": "Serves an array of all comments associated with a given review",
-    "queries": [],
-    "exampleResponse": {
-      "comments": [
-        {
-          "comment_id": 59,
-          "body": "Quis duis mollit ad enim deserunt.",
-          "review_id": 1,
-          "author": "jessjelly",
-          "votes": 3,
-          "created_at": "2021-03-27T19:48:58.110Z"
-        }
-      ]
-    }
   },
   "POST /api/reviews/:review_id/comments": {
     "description": "Posts a comment, associating it with the review_id, and serves that posted comment back ",
@@ -116,35 +146,6 @@
         "author": "userABC123",
         "votes": 0,
         "created_at": "2023-03-29T08:36:54.155Z"
-      }
-    }
-  },
-  "GET /api/users/:username": {
-    "description": "Serves a user object with matching username value",
-    "queries": [],
-    "exampleRequest": {},
-    "exampleResponse": {
-      "user": {
-        "username": "grumpy19",
-        "name": "Paul Grump",
-        "avatar_url": "https://vignette.wikia.nocookie.net/mrmen/images/7/78/Mr-Grumpy-3A.PNG/revision/latest?cb=20170707233013"
-      }
-    }
-  },
-  "PATCH /api/comments/:comment_id": {
-    "description": "Updates a given comments votes key by the value requested",
-    "queries": [],
-    "exampleRequest": {
-      "inc_votes": 10
-    },
-    "exampleResponse": {
-      "comments": {
-        "comment_id": 24,
-        "body": "Ex id ipsum dolore non cillum anim sint duis nisi anim deserunt nisi minim.",
-        "review_id": 10,
-        "author": "jessjelly",
-        "votes": 19,
-        "created_at": "2021-03-27T14:15:31.110Z"
       }
     }
   },
