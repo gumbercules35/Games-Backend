@@ -3,6 +3,7 @@ const {
   fetchReviews,
   updateReviewVotes,
   checkRowExists,
+  addReview,
 } = require(`${__dirname}/../models/index.model.js`);
 
 exports.getReviewById = (req, res, next) => {
@@ -39,6 +40,29 @@ exports.patchReviewVotes = (req, res, next) => {
   updateReviewVotes(review_id, body)
     .then((review) => {
       res.status(200).send({ review });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
+exports.postReview = (req, res, next) => {
+  const { body } = req;
+  const inputPromises = [];
+  if (body.owner) {
+    inputPromises.push(checkRowExists("users", "username", body.owner));
+  }
+  if (body.category)
+    inputPromises.push(checkRowExists("categories", "slug", body.category));
+  Promise.all(inputPromises)
+    .then(() => {
+      return addReview(body);
+    })
+    .then(({ review_id }) => {
+      return fetchReviewById(review_id);
+    })
+    .then((review) => {
+      res.status(201).send({ review });
     })
     .catch((err) => {
       next(err);

@@ -10,7 +10,7 @@ const { fetchUsers } = require("./fetchUsers.model");
 const { removeCommentById } = require("./removeCommentById.model");
 const { updateReviewVotes } = require("./updateReviewVotes.model");
 const { updateCommentById } = require("./updateCommentById.model");
-
+const { addReview } = require("./addReview.model");
 module.exports = {
   addCommentOnReview,
   checkRowExists,
@@ -24,4 +24,5 @@ module.exports = {
   updateReviewVotes,
   fetchUserByUsername,
   updateCommentById,
+  addReview,
 };

@@ -13,6 +13,10 @@ exports.psqlErrors = (err, req, res, next) => {
           msg: "400 Bad Request. null value violates not-null constraint",
         });
         break;
+      case "23503":
+        res.status(400).send({
+          msg: "400 Bad Request. insert or update on table violates foreign key constraint",
+        });
       case "ERR_HTTP_HEADERS_SENT":
         break;
       default:

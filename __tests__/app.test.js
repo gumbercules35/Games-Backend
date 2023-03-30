@@ -535,3 +535,80 @@ describe("PATCH /api/comments/:comment_id", () => {
       });
   });
 });
+
+describe("POST /api/reviews", () => {
+  it("201: Responds with posted review object", () => {
+    const postObj = {
+      title: "POST TITLE",
+      category: "dexterity",
+      designer: "Uwe Rosenberg",
+      owner: "mallionaire",
+      review_body: "BODY OF POST",
+      review_img_url: "IMG URL, DEFAULTS IF NOT PROVIDED",
+    };
+    return request(app)
+      .post("/api/reviews")
+      .send(postObj)
+      .expect(201)
+      .then(({ body: { review } }) => {
+        expect(review).toBeObject();
+        expect(review).toMatchObject({
+          review_id: 14,
+          title: "POST TITLE",
+          category: "dexterity",
+          designer: "Uwe Rosenberg",
+          owner: "mallionaire",
+          review_body: "BODY OF POST",
+          review_img_url: "IMG URL, DEFAULTS IF NOT PROVIDED",
+          created_at: expect.any(String),
+          votes: 0,
+          comment_count: "0",
+        });
+      });
+  });
+  it("400: Responds bad request when post object is missing necessary values", () => {
+    return request(app)
+      .post("/api/reviews")
+      .send({})
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe(
+          "400 Bad Request. null value violates not-null constraint"
+        );
+      });
+  });
+  it("404: responds not found when post object contains unrecognised category", () => {
+    const postObj = {
+      title: "POST TITLE",
+      category: "Crab Battler",
+      designer: "Uwe Rosenberg",
+      owner: "mallionaire",
+      review_body: "BODY OF POST",
+      review_img_url: "IMG URL, DEFAULTS IF NOT PROVIDED",
+    };
+    return request(app)
+      .post("/api/reviews")
+      .send(postObj)
+      .expect(404)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("404 Not Found");
+      });
+  });
+  it("404: responds not found when post object contains unrecognised username", () => {
+    const postObj = {
+      title: "POST TITLE",
+      category: "dexterity",
+      designer: "Uwe Rosenberg",
+      owner: "MrNobody",
+      review_body: "BODY OF POST",
+      review_img_url: "IMG URL, DEFAULTS IF NOT PROVIDED",
+    };
+    return request(app)
+      .post("/api/reviews")
+      .send(postObj)
+      .expect(404)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("404 Not Found");
+      });
+  });
+});
