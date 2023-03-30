@@ -473,3 +473,65 @@ describe("GET /api/users/:username", () => {
       });
   });
 });
+
+describe("PATCH /api/comments/:comment_id", () => {
+  it("200: Responds with comment object, with votes incremented by the request value", () => {
+    const patchObj = { inc_votes: 10 };
+    return request(app)
+      .patch("/api/comments/1")
+      .send(patchObj)
+      .expect(200)
+      .then(({ body: { comment } }) => {
+        expect(comment).toBeObject();
+        expect(comment).toMatchObject({
+          comment_id: 1,
+          body: "I loved this game too!",
+          review_id: 2,
+          author: "bainesface",
+          votes: 26,
+          created_at: "2017-11-22T12:43:33.389Z",
+        });
+      });
+  });
+  it("400: Responds bad request if request is missing required values", () => {
+    return request(app)
+      .patch("/api/comments/1")
+      .send({})
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe(
+          "400 Bad Request. null value violates not-null constraint"
+        );
+      });
+  });
+  it("400: Responds bad request when request value is incorrect data type", () => {
+    const patchObj = { inc_votes: "The Number Ten" };
+    return request(app)
+      .patch("/api/comments/1")
+      .send(patchObj)
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("400 Bad Request");
+      });
+  });
+  it("400: Responds bad request when comment_id given is invalid (wrong data type)", () => {
+    const patchObj = { inc_votes: 10 };
+    return request(app)
+      .patch("/api/comments/stringdatatype")
+      .send(patchObj)
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("400 Bad Request");
+      });
+  });
+  it("404: Responds not found when comment_id is valid but does not yet exist", () => {
+    const patchObj = { inc_votes: 10 };
+    return request(app)
+      .patch("/api/comments/0")
+      .send(patchObj)
+      .expect(404)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("404 Not Found");
+      });
+  });
+});

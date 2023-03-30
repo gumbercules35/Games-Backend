@@ -3,6 +3,7 @@ const {
   getCommentsByReview,
   postCommentToReview,
   deleteCommentById,
+  patchCommentById,
 } = require("./comments.controller");
 const {
   invalidPathError,
@@ -33,4 +34,5 @@ module.exports = {
   getReviews,
   patchReviewVotes,
   getUsers,
+  patchCommentById,
 };

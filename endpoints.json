@@ -118,5 +118,34 @@
         "created_at": "2023-03-29T08:36:54.155Z"
       }
     }
+  },
+  "GET /api/users/:username": {
+    "description": "Serves a user object with matching username value",
+    "queries": [],
+    "exampleRequest": {},
+    "exampleResponse": {
+      "user": {
+        "username": "grumpy19",
+        "name": "Paul Grump",
+        "avatar_url": "https://vignette.wikia.nocookie.net/mrmen/images/7/78/Mr-Grumpy-3A.PNG/revision/latest?cb=20170707233013"
+      }
+    }
+  },
+  "Patch /api/comments/:comment_id": {
+    "description": "Updates a given comments votes key by the value requested",
+    "queries": [],
+    "exampleRequest": {
+      "inc_votes": 10
+    },
+    "exampleResponse": {
+      "comments": {
+        "comment_id": 24,
+        "body": "Ex id ipsum dolore non cillum anim sint duis nisi anim deserunt nisi minim.",
+        "review_id": 10,
+        "author": "jessjelly",
+        "votes": 19,
+        "created_at": "2021-03-27T14:15:31.110Z"
+      }
+    }
   }
 }
