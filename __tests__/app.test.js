@@ -446,7 +446,6 @@ describe("GET /api/reviews?", () => {
         .get("/api/reviews?sort_by=review_id&order=ASC&p=2")
         .expect(200)
         .then(({ body: { reviews } }) => {
-          console.table(reviews);
           expect(reviews).toBeArray();
           expect(reviews).toHaveLength(3);
           reviews.forEach((review) => {
