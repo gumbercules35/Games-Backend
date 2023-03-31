@@ -10,11 +10,7 @@ const {
 const apiJson = require(`${__dirname}/../endpoints.json`);
 console.log(process.env.NODE_ENV);
 beforeEach(() => {
-  if (process.env.NODE_ENV === "test") {
-    return seed(data);
-  } else if (process.env.NODE_ENV === "production") {
-    return seed(prodData);
-  }
+  return seed(data);
 });
 
 afterAll(() => db.end());
