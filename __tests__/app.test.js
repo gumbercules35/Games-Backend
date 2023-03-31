@@ -1,12 +1,14 @@
 const db = require(`${__dirname}/../db/connection.js`);
 const { app } = require(`${__dirname}/../src/app.js`);
 const data = require(`${__dirname}/../db/data/test-data/index.js`);
+const prodData = require(`${__dirname}/../db/data/development-data/index.js`);
 const seed = require(`${__dirname}/../db/seeds/seed.js`);
 const request = require("supertest");
 const {
   checkRowExists,
 } = require(`${__dirname}/../src/models/checkRowExists.model.js`);
 const apiJson = require(`${__dirname}/../endpoints.json`);
+console.log(process.env.NODE_ENV);
 beforeEach(() => {
   return seed(data);
 });
