@@ -8,7 +8,7 @@ const {
   checkRowExists,
 } = require(`${__dirname}/../src/models/checkRowExists.model.js`);
 const apiJson = require(`${__dirname}/../endpoints.json`);
-console.log(process.env.NODE_ENV);
+
 beforeEach(() => {
   return seed(data);
 });
