@@ -17,6 +17,7 @@ exports.fetchReviews = (
     "review_img_url",
     "created_at",
     "votes",
+    "comment_count",
   ];
   const allowedOrder = ["asc", "desc", "ASC", "DESC"];
 
@@ -42,9 +43,16 @@ exports.fetchReviews = (
     queryStr += ` WHERE category = $1`;
   }
 
-  queryStr += ` GROUP BY reviews.review_id
+  if (sort_by === "comment_count") {
+    queryStr += ` GROUP BY reviews.review_id
+      ORDER BY ${sort_by} ${order}
+      LIMIT ${parsedLimit}`;
+  } else {
+    queryStr += ` GROUP BY reviews.review_id
       ORDER BY reviews.${sort_by} ${order}
       LIMIT ${parsedLimit}`;
+  }
+
   if (offset > 0) {
     queryStr += ` OFFSET ${offset * parsedLimit};`;
   } else {

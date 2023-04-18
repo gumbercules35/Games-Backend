@@ -125,13 +125,15 @@ describe("GET Paths", () => {
       describe("Query sort_by=", () => {
         it("200: Should respond with array of all reviews sorted by and valid column passed as query", () => {
           return request(app)
-            .get("/api/reviews?sort_by=votes")
+            .get("/api/reviews?sort_by=comment_count")
             .expect(200)
             .then(({ body }) => {
               const { reviews } = body;
               expect(reviews).toBeArray();
               expect(reviews).toHaveLength(10);
-              expect(reviews).toBeSortedBy("votes", { descending: true });
+              expect(reviews).toBeSortedBy("comment_count", {
+                descending: true,
+              });
             });
         });
         it("400: Responds invalid Query when any non-greenlisted values are used to sort by", () => {
