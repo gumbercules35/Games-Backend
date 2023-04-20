@@ -38,6 +38,8 @@ exports.fetchReviews = (
       FROM reviews
       LEFT JOIN comments
       ON reviews.review_id = comments.review_id`;
+
+  let countCatQueryStr = `SELECT COUNT(review_id) AS total_count FROM categories JOIN reviews ON categories.slug = reviews.category WHERE slug= $1 GROUP BY (slug)`;
   if (category) {
     queryParams.push(category);
     queryStr += ` WHERE category = $1`;
@@ -60,15 +62,17 @@ exports.fetchReviews = (
   }
 
   const dataPromise = db.query(queryStr, queryParams);
-  const totalCountPromise = db.query(
-    `SELECT COUNT(review_id) AS total_count
+  const totalCountPromise = category
+    ? db.query(countCatQueryStr, queryParams)
+    : db.query(
+        `SELECT COUNT(review_id) AS total_count
   FROM reviews;`
-  );
+      );
 
   return Promise.all([dataPromise, totalCountPromise]).then(
     ([dataPromise, totalCountPromise]) => {
       const { rows } = dataPromise;
-      const total_count = totalCountPromise.rows[0].total_count;
+      const total_count = totalCountPromise.rows[0]?.total_count || "0";
 
       return { rows, total_count };
     }
