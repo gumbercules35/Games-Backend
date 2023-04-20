@@ -63,7 +63,6 @@ describe("GET Paths", () => {
         .expect(200)
         .then(({ body }) => {
           const { reviews } = body;
-          // console.log(body);
 
           expect(reviews).toBeInstanceOf(Array);
           expect(reviews).toHaveLength(10);
@@ -101,6 +100,7 @@ describe("GET Paths", () => {
               reviews.forEach((review) => {
                 expect(review.category).toBe("dexterity");
               });
+              expect(body.total_count).toBe("1");
             });
         });
         it("200: Should respond with an empty array when passed a valid existing category and no reviews reference that category ", () => {
@@ -110,7 +110,7 @@ describe("GET Paths", () => {
             .then(({ body }) => {
               const { reviews } = body;
               expect(reviews).toEqual([]);
-              expect(body.total_count).toBe("13");
+              expect(body.total_count).toBe("0");
             });
         });
         it("404: should respond 404 Not Found when given a category that doesnt exist", () => {
@@ -221,7 +221,7 @@ describe("GET Paths", () => {
             reviews.forEach((review) => {
               expect(review.category).toBe("social deduction");
             });
-            expect(body.total_count).toBe("13");
+            expect(body.total_count).toBe("11");
           });
       });
     });
